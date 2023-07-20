@@ -8,19 +8,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Inheritance;
 import javax.persistence.PersistenceContext;
-
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class MemberRepositoryTest {
@@ -33,9 +31,8 @@ class MemberRepositoryTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
     @DisplayName("기본 테스트")
-    public void test() throws Exception {
+    public void test() {
         // given
         Member member = Member.builder()
                 .username("memberA")
@@ -54,9 +51,8 @@ class MemberRepositoryTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
     @DisplayName("조회 기능")
-    public void basicRead() throws Exception {
+    public void basicRead() {
         // given
         Member member1 = Member.builder()
                 .username("memberA")
@@ -88,36 +84,16 @@ class MemberRepositoryTest {
         long countAfterDelete = memberRepository.count();
         assertEquals(countAfterDelete, 0);
     }
-
-    @Test
-    @Transactional
-    @DisplayName("findByUsernameAndAgeGreaterThan")
-    public void findByUsernameAndAgeGreaterThan() throws Exception {
-        // given
-        Member m1 = Member.builder().username("aaa").age(20).build();
-        Member m2 = Member.builder().username("bbb").age(25).build();
-        memberRepository.save(m1);
-        memberRepository.save(m2);
-
-        // when
-        List<Member> result = memberRepository.findByUsernameAndAgeGreaterThan("aaa", 15);
-
-        // then
-        assertEquals(result.get(0).getUsername(), "aaa");
-        assertEquals(result.get(0).getAge(), 20);
-        assertEquals(result.size(), 1);
-    }
-    
     
     @Test
     @DisplayName("findBy")
-    public void findBy () throws Exception {
+    public void findBy () {
         List<Member> result = memberRepository.findBy();
     }
 
     @Test
     @DisplayName("findUser")
-    public void findUserTest() throws Exception {
+    public void findUserTest() {
         Member m1 = Member.builder().username("aaa").age(20).build();
         Member m2 = Member.builder().username("bbb").age(25).build();
         memberRepository.save(m1);
@@ -132,7 +108,7 @@ class MemberRepositoryTest {
     @Test
     @Transactional
     @DisplayName("paging test")
-    public void paging() throws Exception {
+    public void paging() {
         // given
         Member m1 = Member.builder().username("aaa").age(20).build();
         Member m2 = Member.builder().username("bbb").age(20).build();
@@ -170,7 +146,7 @@ class MemberRepositoryTest {
     @Test
     @Transactional
     @DisplayName("slice test")
-    public void slicing() throws Exception {
+    public void slicing() {
         // given
         Member m1 = Member.builder().username("aaa").age(20).build();
         Member m2 = Member.builder().username("bbb").age(20).build();
@@ -204,7 +180,7 @@ class MemberRepositoryTest {
 
     @Test
     @Transactional
-    public void findMemberLazy() throws Exception {
+    public void findMemberLazy() {
         // given
         Team teamA = Team.builder().name("TeamA").build();
         Team teamB = Team.builder().name("TeamB").build();
@@ -229,9 +205,8 @@ class MemberRepositoryTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
     @DisplayName("bulk")
-    public void bulkUpdate() throws Exception {
+    public void bulkUpdate() {
         // given
         Member m1 = Member.builder().username("aaa").age(20).build();
         Member m2 = Member.builder().username("bbb").age(20).build();

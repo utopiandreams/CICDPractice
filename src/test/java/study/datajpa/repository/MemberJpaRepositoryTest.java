@@ -4,13 +4,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.entity.Member;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class MemberJpaRepositoryTest {
@@ -19,9 +18,8 @@ class MemberJpaRepositoryTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
     @DisplayName("기본 테스트")
-    public void test() throws Exception {
+    public void test() {
         // given
         Member member = Member.builder()
                 .username("memberA")
@@ -39,9 +37,8 @@ class MemberJpaRepositoryTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
     @DisplayName("조회 기능")
-    public void basicRead() throws Exception {
+    public void basicRead() {
         // given
         Member member1 = Member.builder()
                 .username("memberA")
@@ -77,7 +74,7 @@ class MemberJpaRepositoryTest {
     @Test
     @Transactional
     @DisplayName("findByUsernameAndAgeGreaterThan")
-    public void findByUsernameAndAgeGreaterThan() throws Exception {
+    public void findByUsernameAndAgeGreaterThan() {
         // given
         Member m1 = Member.builder().username("aaa").age(20).build();
         Member m2 = Member.builder().username("bbb").age(25).build();
@@ -96,7 +93,7 @@ class MemberJpaRepositoryTest {
     @Test
     @Transactional
     @DisplayName("paging test")
-    public void paging() throws Exception {
+    public void paging() {
         // given
         Member m1 = Member.builder().username("aaa").age(20).build();
         Member m2 = Member.builder().username("bbb").age(20).build();
@@ -128,9 +125,8 @@ class MemberJpaRepositoryTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
     @DisplayName("bulk")
-    public void bulkUpdate() throws Exception {
+    public void bulkUpdate() {
         // given
         Member m1 = Member.builder().username("aaa").age(20).build();
         Member m2 = Member.builder().username("bbb").age(20).build();

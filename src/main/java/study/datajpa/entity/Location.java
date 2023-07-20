@@ -1,7 +1,6 @@
 package study.datajpa.entity;
 
 import lombok.Data;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 
 import javax.persistence.Column;

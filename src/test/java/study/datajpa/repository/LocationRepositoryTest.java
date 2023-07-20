@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import study.datajpa.entity.Location;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class LocationRepositoryTest {
 
@@ -19,7 +17,7 @@ class LocationRepositoryTest {
 
     @Test
     @DisplayName("geometry")
-    public void test() throws Exception {
+    public void test() {
         // given
         GeometryFactory factory = new GeometryFactory();
         Point testPoint = factory.createPoint(new Coordinate(123.123, 456.456));
@@ -31,6 +29,5 @@ class LocationRepositoryTest {
 
         // then
         System.out.println("testLocation = " + testLocation);
-
     }
 }
