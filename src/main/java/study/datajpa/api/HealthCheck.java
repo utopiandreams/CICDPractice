@@ -1,16 +1,15 @@
 package study.datajpa.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.sql.DataSource;
 
 @RestController
 @RequiredArgsConstructor
 public class HealthCheck {
 
-    private final DataSource dataSource;
+    private final DataSourceProperties dataSourceProperties;
 
     @GetMapping("/")
     public String healthCheck() {
@@ -19,6 +18,9 @@ public class HealthCheck {
 
     @GetMapping("/db")
     public String DBCheck() {
-        return dataSource.toString();
+        String driverClassName = dataSourceProperties.getDriverClassName();
+        String url = dataSourceProperties.getUrl();
+        return "DBtype = " + driverClassName + "\n" +
+                "url = " + url;
     }
 }
