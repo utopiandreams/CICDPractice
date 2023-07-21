@@ -28,6 +28,14 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.RDS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.RDS_SECRET_KEY }}
+        aws-region: ap-northeast-2
+
     - name: Build with Gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       with:
