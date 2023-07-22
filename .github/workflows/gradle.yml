@@ -61,7 +61,7 @@ jobs:
       # (3-3) RDS 보안 그룹에 깃허브 러너 IP 인바운드 규칙 추가
       - name: Add Github Actions IP to Security group
         run: |
-          aws rds authorize-db-security-group-ingress --db-security-group-name ${{ env.SECURITY_GROUP_NAME }} --cidrip ${{ steps.ip.outputs.ipv4 }}/32 --port 3306
+          aws rds authorize-db-security-group-ingress --db-security-group-name ${{ env.SECURITY_GROUP_NAME }} --cidrip ${{ steps.ip.outputs.ipv4 }}/32
 
       # (4) Gradle build
       - name: Build with Gradle
@@ -72,7 +72,7 @@ jobs:
       # (5) RDS 보안 그룹에서 깃허브 러너 IP 삭제
       - name: Remove Github Actions IP from security group
         run: |
-          aws rds revoke-security-group-ingress --group-name ${{ env.SECURITY_GROUP_NAME }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32    
+          aws rds revoke-security-group-ingress --db-security-group-name ${{ env.SECURITY_GROUP_NAME }} --cidrip ${{ steps.ip.outputs.ipv4 }}/32    
 
       # (6) AWS - EC2, S3 인증
       - name: Configure AWS Credentials
