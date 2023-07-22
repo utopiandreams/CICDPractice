@@ -23,6 +23,7 @@ env:
   S3_BUCKET_NAME: practice-githubactions-bucket
   CODE_DEPLOY_APPLICATION_NAME: codedeploy-practice-app
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: codedeploy-group
+  SECURITY_GROUP_NAME: rds-security
 
 
 jobs:
@@ -42,13 +43,38 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      # (3) Gradle build
+      # (3) RDS 접근 권한 설정
+
+      # (3-1) AWS - RDS 인증
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.RDS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.RDS_SECRET_KEY }}
+          aws-region: ap-northeast-2
+
+      # (3-2) 깃허브 액션 러너의 아이피 얻어오기
+      - name: Get Github action IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      # (3-3) RDS 보안 그룹에 깃허브 러너 IP 인바운드 규칙 추가
+      - name: Add Github Actions IP to Security group
+        run: |
+          aws rds authorize-security-group-ingress --group-name ${{ env.SECURITY_GROUP_NAME }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32 
+
+      # (4) Gradle build
       - name: Build with Gradle
         uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
         with:
           arguments: build
 
-      # (4) AWS 인증
+      # (5) RDS 보안 그룹에서 깃허브 러너 IP 삭제
+      - name: Remove Github Actions IP from security group
+        run: |
+          aws rds revoke-security-group-ingress --group-name ${{ env.SECURITY_GROUP_NAME }} --protocol tcp --port 5432 --cidr ${{ steps.ip.outputs.ipv4 }}/32    
+
+      # (6) AWS - EC2, S3 인증
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -56,7 +82,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ap-northeast-2
 
-      # (5) 빌드 결과물을 S3 버킷에 업로드
+      # (7) 빌드 결과물을 S3 버킷에 업로드
       - name: Upload to AWS S3
         run: |
           aws deploy push \
@@ -65,7 +91,7 @@ jobs:
             --s3-location s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip \
             --source .
 
-      # (6) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
+      # (8) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
       - name: Deploy to AWS EC2 from S3
         run: |
           aws deploy create-deployment \
